@@ -11,4 +11,8 @@
     <Folder Include="Constraints\" />
   </ItemGroup>
 
+  <ItemGroup>
+	<InternalsVisibleTo Include="SquishyPlanet.Tests" />
+  </ItemGroup>
+
 </Project>
