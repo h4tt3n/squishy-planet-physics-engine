@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Collision\" />
-    <Folder Include="Constraints\" />
   </ItemGroup>
 
   <ItemGroup>

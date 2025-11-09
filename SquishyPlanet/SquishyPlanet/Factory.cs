@@ -13,10 +13,12 @@ namespace SquishyPlanet
     public class Factory
     {
         private readonly Particles _particles;
+        private readonly DistanceConstraints _distanceConstraints;
 
-        internal Factory(Particles particles)
+        internal Factory(Particles particles, DistanceConstraints distanceConstraints)
         {
-            _particles = particles;            
+            _particles = particles;
+            _distanceConstraints = distanceConstraints;
         }
 
         /// <summary>
@@ -36,6 +38,16 @@ namespace SquishyPlanet
         public bool DeleteParticle(int id)
         {
             return _particles.Delete(id);
+        }
+
+        public int CreateDistanceConstraint(int idA, int idB, float radius)
+        {
+            return _distanceConstraints.Create(idA, idB, radius);
+        }
+
+        public bool DeleteDistanceConstraint(int id)
+        {
+            return _distanceConstraints.Delete(id);
         }
     }
 }

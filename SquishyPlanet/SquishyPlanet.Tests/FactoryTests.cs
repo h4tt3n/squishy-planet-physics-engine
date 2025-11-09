@@ -12,7 +12,7 @@ namespace SquishyPlanet.Tests
 
         public FactoryTests()
         {
-            _world = new World(maxParticles: 2); // Small world for limit testing
+            _world = new World(maxParticles: 2, maxDistanceConstraints: 0); // Small world for limit testing
         }
 
         [Fact]

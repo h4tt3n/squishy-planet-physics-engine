@@ -19,7 +19,7 @@ namespace SquishyPlanet.Objects
         // ID Management
         private int numFreeIds;
         private readonly int[] nextFreeId;
-        private readonly int[] index;
+        public readonly int[] index;
         public readonly int[] Id;
 
         // Particle Properties
