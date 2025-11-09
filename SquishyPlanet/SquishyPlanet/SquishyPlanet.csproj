@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Collision\" />
+    <Folder Include="Constraints\" />
+  </ItemGroup>
+
 </Project>
