@@ -1,10 +1,11 @@
-﻿using SquishyPlanet.Utility;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+
+using SquishyPlanet.Utility;
 
 namespace SquishyPlanet.Objects
 {
@@ -185,7 +186,7 @@ namespace SquishyPlanet.Objects
             return true;
         }
 
-        public void Update(float dt)
+        public void Step(float dt)
         {
             Parallel.For(0, NumObjects, i =>
             {

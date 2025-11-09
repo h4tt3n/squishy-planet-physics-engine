@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SquishyPlanet.Utility
 {
-    internal struct ColorRgb
+    public struct ColorRgb
     {
         public byte R, G, B;
 
