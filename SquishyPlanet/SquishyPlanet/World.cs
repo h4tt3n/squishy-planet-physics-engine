@@ -1,11 +1,12 @@
-﻿using SquishyPlanet.Objects;
-using SquishyPlanet.Utility;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using SquishyPlanet.Constraints;
+using SquishyPlanet.Objects;
+using SquishyPlanet.Utility;
 
 namespace SquishyPlanet
 {
@@ -13,6 +14,7 @@ namespace SquishyPlanet
     {
         private readonly Particles _particles;
         private readonly DistanceConstraints _distanceConstraints;
+        private readonly AngularConstraints _angularConstraints;
 
         public readonly Factory Factory;
         public Vector2 Gravity { get; set; } = new(0, 98200.0f);
@@ -21,26 +23,36 @@ namespace SquishyPlanet
         public int NumParticles => _particles.NumObjects;
         public int NumDistanceConstraints => _distanceConstraints.NumObjects;
 
-        public World(int maxParticles, int maxDistanceConstraints)
+        public World(int maxParticles, int maxDistanceConstraints, int maxAngularConstraints)
         {
             _particles = new Particles(maxParticles);
             _distanceConstraints = new DistanceConstraints(maxDistanceConstraints, _particles);
+            _angularConstraints = new AngularConstraints(maxAngularConstraints, _particles, _distanceConstraints);
 
-            Factory = new Factory(_particles, _distanceConstraints);
+            Factory = new Factory(_particles, _distanceConstraints, _angularConstraints);
+        }
+
+        public void ComputeData(float invDt)
+        {
+            _distanceConstraints.ComputeData(invDt);
+            _angularConstraints.ComputeData(invDt);
         }
 
         public void Step(float dt)
         {
-            ApplyForces(dt);
+            _distanceConstraints.ComputeData(1 / dt);
+            _angularConstraints.ComputeData(1 / dt);
 
             _distanceConstraints.ApplyWarmStart();
+            _angularConstraints.ApplyWarmStart();
 
             for (int i = 0; i < NumIterations; i++)
             {
-                _distanceConstraints.ComputeData(1 / dt);
+                _angularConstraints.ApplyCorrectiveImpulse();
+                _distanceConstraints.ApplyCorrectiveImpulse();
             }
 
-            _distanceConstraints.ApplyCorrectiveImpulse();
+            ApplyForces(dt);
 
             _particles.Step(dt);
         }

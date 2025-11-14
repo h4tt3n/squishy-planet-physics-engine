@@ -24,6 +24,8 @@ namespace SquishyPlanet.SpaceGameDemo
         private World _world;
         private Texture2D _particleTexture; // A 1x1 white pixel for drawing
 
+        private float dt = 0.01f; // Using fixed time step
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -35,7 +37,7 @@ namespace SquishyPlanet.SpaceGameDemo
         {
             // *** 4. Instantiate your physics world ***
             // This constructor assumes World.cs was updated to accept maxDistanceConstraints
-            _world = new World(maxParticles: 100000, maxDistanceConstraints: 100000);
+            _world = new World(maxParticles: 100000, maxDistanceConstraints: 100000, maxAngularConstraints: 100000);
 
             // Set gravity (in pixels/sec^2). 9.81 is too slow for screens.
             _world.Gravity = new PhysicsVector2(0, 500f);
@@ -45,14 +47,16 @@ namespace SquishyPlanet.SpaceGameDemo
 
             // Create a few dynamic particles
             var rand = new Random();
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 100; i++)
             {
+                float mass = rand.Next(1, 10);
+
                 _world.Factory.CreateParticle(
                     objectType: 1,
                     position: new PhysicsVector2(rand.Next(100, 700), rand.Next(50, 200)),
                     velocity: new PhysicsVector2(rand.Next(-100, 100), rand.Next(-100, 100)),
-                    mass: 1.0f,
-                    radius: rand.Next(4, 8),
+                    mass: mass,
+                    radius: mass,
                     color: new ColorRgb((byte)rand.Next(0, 255), (byte)rand.Next(0, 255), (byte)rand.Next(0, 255))
                 );
             }
@@ -67,15 +71,27 @@ namespace SquishyPlanet.SpaceGameDemo
                 color: staticColor
             );
 
-            // Create constraints
+            // Create distance constraints
             for (int i = 0; i < _world.NumParticles; i++)
             {
                 int idA = i;
                 int idB = (i + 1) % _world.NumParticles; // Connects last particle back to first
-                int radius = 10; // Line thickness
+                int radius = 4; // Line thickness
 
                 _world.Factory.CreateDistanceConstraint(idA, idB, radius);
             }
+
+            _world.ComputeData(1 / dt);
+
+            for (int i = 0; i < _world.NumDistanceConstraints; i++)
+            {
+                int idA = i;
+                int idB = (i + 1) % _world.NumDistanceConstraints;
+
+                _world.Factory.CreateAngularConstraint(idA, idB);
+            }
+
+            _world.ComputeData(1 / dt);
 
             base.Initialize();
         }
@@ -95,7 +111,6 @@ namespace SquishyPlanet.SpaceGameDemo
                 Exit();
 
             // *** 7. Get delta time and step the simulation ***
-            float dt = 0.01f; // Using fixed time step
             _world.Step(dt);
 
             base.Update(gameTime);

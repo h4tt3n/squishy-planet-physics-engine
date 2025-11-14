@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Numerics;
 using System.Threading.Tasks;
+using SquishyPlanet.Objects;
 
-namespace SquishyPlanet.Objects
+namespace SquishyPlanet.Constraints
 {
     /// <summary>
     /// Internal data store for all distance constraints.
@@ -21,7 +22,7 @@ namespace SquishyPlanet.Objects
         // ID Management
         private int numFreeIds;
         private readonly int[] nextFreeId;
-        private readonly int[] index; // Sparse lookup: index[id] -> denseIndex
+        public readonly int[] index; // Sparse lookup: index[id] -> denseIndex
         public readonly int[] Id;     // Packed array: Id[denseIndex] -> id
 
         // Constraint Properties (SoA)
@@ -134,7 +135,7 @@ namespace SquishyPlanet.Objects
             CCorrection[createIndex] = 1.0f;
 
             Radius[createIndex] = radius;
-            RestLength[createIndex] = 30; // distance;
+            RestLength[createIndex] = distance;
             ReducedMass[createIndex] = reducedMass;
 
             // Reset transient data
