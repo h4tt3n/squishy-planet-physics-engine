@@ -31,13 +31,15 @@ namespace SquishyPlanet.SpaceGameDemo
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            _graphics.PreferredBackBufferWidth = 1280;
+            _graphics.PreferredBackBufferHeight = 720;
         }
 
         protected override void Initialize()
         {
             // *** 4. Instantiate your physics world ***
             // This constructor assumes World.cs was updated to accept maxDistanceConstraints
-            _world = new World(maxParticles: 100000, maxDistanceConstraints: 100000, maxAngularConstraints: 100000);
+            _world = new World(maxParticles: 100000, maxDistanceConstraints: 100000, maxAngularConstraints: 100000, maxParticleParticleCollisions: 100000);
 
             // Set gravity (in pixels/sec^2). 9.81 is too slow for screens.
             _world.Gravity = new PhysicsVector2(0, 500f);
@@ -49,7 +51,7 @@ namespace SquishyPlanet.SpaceGameDemo
             var rand = new Random();
             for (int i = 0; i < 100; i++)
             {
-                float mass = rand.Next(1, 10);
+                float mass = rand.Next(2, 16);
 
                 _world.Factory.CreateParticle(
                     objectType: 1,

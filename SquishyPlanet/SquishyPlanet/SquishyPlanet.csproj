@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Collision\" />
-  </ItemGroup>
-
-  <ItemGroup>
 	<InternalsVisibleTo Include="SquishyPlanet.Tests" />
   </ItemGroup>
 
