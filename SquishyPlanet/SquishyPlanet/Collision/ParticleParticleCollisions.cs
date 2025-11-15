@@ -134,10 +134,10 @@ namespace SquishyPlanet.Collision
             ParticleA[createIndex] = particleA;
             ParticleB[createIndex] = particleB;
 
-            CStiffness[createIndex] = 1.0f;
+            CStiffness[createIndex] = 0.5f;
             CDamping[createIndex] = 1.0f;
-            CWarmstart[createIndex] = 1.0f;
-            CCorrection[createIndex] = 0.5f;
+            CWarmstart[createIndex] = 0.0f;
+            CCorrection[createIndex] = 0.2f;
 
             ReducedMass[createIndex] = reducedMass;
 

@@ -49,18 +49,18 @@ namespace SquishyPlanet.SpaceGameDemo
 
             // Create a few dynamic particles
             var rand = new Random();
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 1000; i++)
             {
-                float mass = rand.Next(2, 16);
+                float mass = rand.Next(2, 8);
 
                 _world.Factory.CreateParticle(
                     objectType: 1,
-                    position: new PhysicsVector2(rand.Next(100, 700), rand.Next(50, 200)),
-                    velocity: new PhysicsVector2(rand.Next(-100, 100), rand.Next(-100, 100)),
+                    position: new PhysicsVector2(rand.Next(100, 1180), rand.Next(100, 620)),
+                    velocity: PhysicsVector2.Zero, //new PhysicsVector2(rand.Next(-100, 100), rand.Next(-100, 100)),
                     mass: mass,
                     radius: mass,
                     color: new ColorRgb((byte)rand.Next(0, 255), (byte)rand.Next(0, 255), (byte)rand.Next(0, 255))
-                );
+                ); 
             }
 
             // Create a static "floor" particle
@@ -74,26 +74,26 @@ namespace SquishyPlanet.SpaceGameDemo
             );
 
             // Create distance constraints
-            for (int i = 0; i < _world.NumParticles; i++)
-            {
-                int idA = i;
-                int idB = (i + 1) % _world.NumParticles; // Connects last particle back to first
-                int radius = 4; // Line thickness
+            //for (int i = 0; i < _world.NumParticles; i++)
+            //{
+            //    int idA = i;
+            //    int idB = (i + 1) % _world.NumParticles; // Connects last particle back to first
+            //    int radius = 4; // Line thickness
 
-                _world.Factory.CreateDistanceConstraint(idA, idB, radius);
-            }
+            //    _world.Factory.CreateDistanceConstraint(idA, idB, radius);
+            //}
 
-            _world.ComputeData(1 / dt);
+            //_world.ComputeData(1 / dt);
 
-            for (int i = 0; i < _world.NumDistanceConstraints; i++)
-            {
-                int idA = i;
-                int idB = (i + 1) % _world.NumDistanceConstraints;
+            //for (int i = 0; i < _world.NumDistanceConstraints; i++)
+            //{
+            //    int idA = i;
+            //    int idB = (i + 1) % _world.NumDistanceConstraints;
 
-                _world.Factory.CreateAngularConstraint(idA, idB);
-            }
+            //    _world.Factory.CreateAngularConstraint(idA, idB);
+            //}
 
-            _world.ComputeData(1 / dt);
+            //_world.ComputeData(1 / dt);
 
             base.Initialize();
         }

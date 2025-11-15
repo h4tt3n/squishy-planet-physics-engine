@@ -11,6 +11,7 @@ using SquishyPlanet.Collision;
 using SquishyPlanet.Constraints;
 using SquishyPlanet.Objects;
 using SquishyPlanet.Utility;
+using SquishyPlanet.Forces;
 
 namespace SquishyPlanet
 {
@@ -19,11 +20,15 @@ namespace SquishyPlanet
         private readonly Particles _particles;
         private readonly DistanceConstraints _distanceConstraints;
         private readonly AngularConstraints _angularConstraints;
+
         private readonly ParticleParticleCollisions _particleParticleCollisions;
 
+        private readonly NewtonianGravity _newtonianGravity;
 
         private readonly SpatialHashGrid _grid;
         private readonly HashSet<(int, int)> _collisionPairs;
+
+        private readonly List<int> _allParticles;
 
         public readonly Factory Factory;
         public Vector2 Gravity { get; set; } = new(0, 98200.0f);
@@ -40,10 +45,15 @@ namespace SquishyPlanet
             _particles = new Particles(maxParticles);
             _distanceConstraints = new DistanceConstraints(maxDistanceConstraints, _particles);
             _angularConstraints = new AngularConstraints(maxAngularConstraints, _particles, _distanceConstraints);
+
+            _newtonianGravity = new NewtonianGravity(_particles);
+
             _particleParticleCollisions = new ParticleParticleCollisions(maxParticleParticleCollisions, _particles);
 
             _grid = new SpatialHashGrid(WorldWidth, WorldHeight, GridCellSize);
             _collisionPairs = new HashSet<(int, int)>();
+
+            _allParticles = new List<int>(maxParticles);
 
             Factory = new Factory(_particles, _distanceConstraints, _angularConstraints);
         }
@@ -57,6 +67,12 @@ namespace SquishyPlanet
 
         public void Step(float dt)
         {
+            UpdateSimulationLists();
+
+            _newtonianGravity.Solve(_allParticles, _allParticles, dt);
+
+            //ApplyForces(dt);
+
             BuildBroadphase();
 
             QueryBroadphase();
@@ -75,8 +91,6 @@ namespace SquishyPlanet
                 _distanceConstraints.ApplyCorrectiveImpulse();
                 _particleParticleCollisions.ApplyCorrectiveImpulse();
             }
-
-            ApplyForces(dt);
 
             _particles.Step(dt);
         }
@@ -169,6 +183,18 @@ namespace SquishyPlanet
                         }
                     }
                 }
+            }
+        }
+
+        private void UpdateSimulationLists()
+        {
+            _allParticles.Clear();
+
+            // Loop through all active particles
+            for (int i = 0; i < _particles.NumObjects; i++)
+            {
+                // Add the stable ID from the dense array
+                _allParticles.Add(_particles.Id[i]);
             }
         }
 
