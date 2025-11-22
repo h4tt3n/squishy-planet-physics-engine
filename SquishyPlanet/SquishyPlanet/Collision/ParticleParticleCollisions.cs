@@ -136,7 +136,7 @@ namespace SquishyPlanet.Collision
 
             CStiffness[createIndex] = 0.5f;
             CDamping[createIndex] = 1.0f;
-            CWarmstart[createIndex] = 0.0f;
+            CWarmstart[createIndex] = 0.5f;
             CCorrection[createIndex] = 0.2f;
 
             ReducedMass[createIndex] = reducedMass;
@@ -211,15 +211,15 @@ namespace SquishyPlanet.Collision
             // Sequential Gauss-Seidel solver. CANNOT be parallelized.
             for (int i = 0; i < NumObjects; i++)
             {
-                _SolveImpulse(i);
+                SolveImpulse(i);
             }
             for (int i = NumObjects - 1; i >= 0; i--)
             {
-                _SolveImpulse(i);
+                SolveImpulse(i);
             }
         }
 
-        private void _SolveImpulse(int i)
+        private void SolveImpulse(int i)
         {
             // Only solve for penetrating contacts
             if (Distance[i] > 0) { return; }
@@ -240,12 +240,12 @@ namespace SquishyPlanet.Collision
 
         public void ApplyWarmStart()
         {
-            Parallel.For(0, NumObjects, i =>
+            for (int i = 0; i < NumObjects; i++)
             {
                 float projectedImpulse = Vector2.Dot(Unit[i], AccumulatedImpulse[i]);
                 AccumulatedImpulse[i] = Vector2.Zero;
 
-                if (projectedImpulse < 0.0) { return; } // continue
+                if (projectedImpulse < 0.0) { continue; }
 
                 int pA = _particles.index[ParticleA[i]];
                 int pB = _particles.index[ParticleB[i]];
@@ -254,7 +254,7 @@ namespace SquishyPlanet.Collision
 
                 _particles.Impulse[pA] -= warmstartImpulse * _particles.InvMass[pA];
                 _particles.Impulse[pB] += warmstartImpulse * _particles.InvMass[pB];
-            });
+            }
         }
 
         public void ComputeData(float invDt)

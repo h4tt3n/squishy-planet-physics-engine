@@ -13,7 +13,7 @@ namespace SquishyPlanet.Tests
         public WorldTests()
         {
             // Arrange (common for all tests)
-            _world = new World(maxParticles: 100, maxDistanceConstraints: 0);
+            _world = new World(maxParticles: 2, maxDistanceConstraints: 0, maxAngularConstraints: 0, maxParticleParticleCollisions: 0);
         }
 
         [Fact]
