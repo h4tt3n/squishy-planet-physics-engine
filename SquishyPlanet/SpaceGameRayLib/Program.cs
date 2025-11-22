@@ -14,6 +14,9 @@ namespace SpaceGameRayLib
             const int ScreenHeight = 720;
             const float dt = 0.02f;
 
+            // Set MSAA 4x (smooths jagged edges of geometry)
+            Raylib.SetConfigFlags(ConfigFlags.Msaa4xHint);
+
             Raylib.InitWindow(ScreenWidth, ScreenHeight, "SquishyPlanet - RayLib Batching Fixed");
 
             var world = new World(
@@ -22,6 +25,7 @@ namespace SpaceGameRayLib
                 maxAngularConstraints: 100000,
                 maxParticleParticleCollisions: 100000
             );
+
             world.Gravity = new Vector2(0, 500f);
 
             // --- Setup Test Data ---
@@ -79,6 +83,15 @@ namespace SpaceGameRayLib
             Texture2D particleTexture = Raylib.LoadTextureFromImage(circleImg);
             Raylib.SetTextureFilter(particleTexture, TextureFilter.Bilinear);
             Raylib.UnloadImage(circleImg);
+
+            // Generate smaller versions of the texture for the GPU to use when scaling down
+            Raylib.GenTextureMipmaps(ref particleTexture);
+
+            // This blends pixels together when rotated or scaled, smoothing the look.
+            Raylib.SetTextureFilter(particleTexture, TextureFilter.Bilinear);
+
+            // Use Trilinear filtering for the best quality when scaling down
+            //Raylib.SetTextureFilter(particleTexture, TextureFilter.Trilinear);
 
             // Generate 1x1 White Pixel for lines
             Image pixelImg = Raylib.GenImageColor(1, 1, Color.White);
